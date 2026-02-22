@@ -18,12 +18,23 @@ if os.path.exists(output_dir):
     shutil.rmtree(output_dir)
 os.makedirs(output_dir, exist_ok=True)
 
-# 2️⃣ Získání složek a jejich seřazení podle data (od nejnovější)
+# 2️⃣ Získání složek a jejich seřazení podle data vytvoření (od nejnovější)
 subfolders = [
     os.path.join(input_dir, d) 
     for d in os.listdir(input_dir) 
     if os.path.isdir(os.path.join(input_dir, d))
 ]
+
+def get_creation_time(path):
+    stat = os.stat(path)
+    # Zkusíme birthtime (Linux/Mac), jinak použijeme ctime (Windows)
+    try:
+        return stat.st_birthtime
+    except AttributeError:
+        return stat.st_ctime
+
+# Seřazení podle funkce výše
+subfolders.sort(key=get_creation_time, reverse=True)
 
 # Sort podle mtime (modify time) - reverse=True zajistí nejnovější nahoře
 subfolders.sort(key=lambda x: os.path.getmtime(x), reverse=True)
