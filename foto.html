@@ -33,39 +33,32 @@
   <h1 class="hed1">Foto</h1>
 </div>
 
-  <!-- Galerie -->
-  <div id="github-gallery"></div>
 
-  <!-- Načtení automaticky generovaného seznamu obrázků s podsložkami -->
-  <script src="gallery_list.js"></script>
-  <script>
-    const container = document.getElementById("github-gallery");
 
-    // images je objekt { "Nadpis sekce": ["foto1.jpg", "foto2.jpg"] }
-    for (const [folderName, files] of Object.entries(images)) {
-      const card = document.createElement("div");
-      card.className = "w3-card";
+<div id="github-gallery-container" class="vid-gallery-grid w3-card"></div>
 
-      const heading = document.createElement("h2");
-      heading.textContent = folderName;
-      card.appendChild(heading);
+<div id="imageModal" class="w3-modal" style="display:none; background-color: rgba(0,0,0,0.9); z-index: 9999;">
+  <div class="w3-modal-content w3-animate-zoom" style="background: #1a1a1a; max-width: 1000px; margin-top: 30px; border-radius: 8px;">
+    
+    <header class="w3-container" style="border-bottom: 1px solid #333; padding: 10px 20px;">
+      <h2 id="imgModalTitle" class="w3-large" style="color:white; margin:10px 0;"></h2>
+      <span onclick="closeImgModal()" class="w3-button w3-display-topright w3-hover-red" style="color:white; padding:12px 16px;">&times;</span>
+    </header>
 
-      const grid = document.createElement("div");
-      grid.className = "gallery-grid";
-      card.appendChild(grid);
+    <div id="imgModalContent"></div>
 
-      container.appendChild(card);
+    <footer class="w3-container" style="border-top: 1px solid #333; background: #1a1a1a; padding: 15px 0;">
+      <p id="imgModalDesc" class="w3-center" style="color:#888; margin-bottom: 10px;"></p>
+      <div id="imgNav" class="w3-center">
+        </div>
+    </footer>
+  </div>
+</div>
 
-        files.forEach(fileName => {
-      const img = document.createElement("img");
-      // URL obrázku odkazuje na raw GitHub content
-      img.src = fileName; // protože fileName už obsahuje 'images/.../soubor'
-      img.loading = "lazy";
-      grid.appendChild(img);
-      });
+<script src="gallery_list.js"></script>
+<script src="gallery_logic.js"></script>
 
-    }
-  </script>
+
 
    <!-- Zápatí -->
  <footer class="w3-card w3-container w3-center" style="margin: 40px auto 20px; padding: 40px; max-width: 1200px; background-color: rgba(88, 88, 88, 0.336); border-radius: 25px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);">

@@ -5,6 +5,12 @@ let myVideoProjects = [];
 let currentProj = 0;
 let currentVid = 0;
 
+function sklonuj(pocet, jedna, dveCtyri, petAVice) {
+    if (pocet === 1) return jedna;
+    if (pocet >= 2 && pocet <= 4) return dveCtyri;
+    return petAVice;
+}
+
 async function loadTableData() {
     try {
         const response = await fetch(sheetURL);
@@ -43,30 +49,66 @@ function buildVidGallery() {
     container.innerHTML = ""; 
 
     myVideoProjects.forEach((proj, index) => {
-        let thumbUrl;
-
-        // Kontrola, jestli je v thumbID celá URL nebo jen kód
-        if (proj.thumbID.startsWith('http')) {
-            // Pokud začíná na http, je to přímý odkaz na obrázek
-            thumbUrl = proj.thumbID;
-        } else {
-            // Jinak je to YouTube ID a složíme URL pro náhled
-            thumbUrl = `https://img.youtube.com/vi/${proj.thumbID}/maxresdefault.jpg`;
-        }
+        let thumbUrl = proj.thumbID.startsWith('http') 
+            ? proj.thumbID 
+            : `https://img.youtube.com/vi/${proj.thumbID}/maxresdefault.jpg`;
         
         const div = document.createElement('div');
-        div.className = 'vid-gallery-item';
+        div.className = 'vid-gallery-item w3-card-4'; 
+        div.style.cursor = "pointer";
         div.onclick = () => openModal(index);
+        const pocetVidi = proj.videos.length;
+        const textVidi = sklonuj(pocetVidi, "VIDEO", "VIDEA", "VIDEÍ");
+
+        // Sjednocená struktura karty s "nálepkou"
         div.innerHTML = `
-            <img src="${thumbUrl}" alt="${proj.title}" 
-                 onerror="handleImageError(this, '${proj.thumbID}')">
-            <div class="vid-item-text">
-                <h3>${proj.title}</h3>
-                <p>${proj.desc}</p>
+            <div class="vid-thumb-wrapper" style="position:relative; aspect-ratio: 16/9; overflow:hidden; background:#000;">
+        <img src="${thumbUrl}" ...>
+        <div style="position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.8); color:#fff; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:bold; letter-spacing: 1px;">
+            ${pocetVidi} ${textVidi}
+        </div>
+    </div>
+            <div class="vid-item-text" style="padding: 15px;">
+                <h3 style="margin:0; font-size:1.1em; color:#fff; font-weight:600;">${proj.title}</h3>
+                <p style="margin:5px 0 0; color:#aaa; font-size:0.9em; line-height:1.4;">${proj.desc}</p>
             </div>
         `;
         container.appendChild(div);
     });
+}
+
+// Funkce pro aktualizaci obsahu modálu s fixní výškou
+function updateModalContent() {
+    const proj = myVideoProjects[currentProj];
+    const content = document.getElementById('modalContent');
+    const nav = document.getElementById('videoNav');
+    
+    if (!proj.videos || proj.videos.length === 0 || proj.videos[0] === "") {
+        content.innerHTML = `<div style="color:white;">Video není k dispozici</div>`;
+        return;
+    }
+
+    // Iframe se nyní roztáhne přesně do fixního prostoru 60vh
+    content.innerHTML = `
+        <div style="width:100%; height:100%;">
+            <iframe src="${proj.videos[currentVid]}?autoplay=1" 
+                    style="width:100%; height:100%; border:0;" 
+                    allow="autoplay; fullscreen" allowfullscreen></iframe>
+        </div>`;
+    
+    document.getElementById('modalTitle').innerText = proj.title;
+    document.getElementById('modalDesc').innerText = proj.desc;
+
+    // Navigace
+    if (proj.videos.length > 1) {
+        nav.innerHTML = `
+            <button class="nav-btn" onclick="prevVid()">❮ Předchozí</button>
+            <span style="color:white; margin: 0 15px; font-weight:bold;">${currentVid + 1} / ${proj.videos.length}</span>
+            <button class="nav-btn" onclick="nextVid()">Další ❯</button>
+        `;
+    } else {
+        nav.innerHTML = "";
+    }
 }
 
 // Pomocná funkce pro případ, že se obrázek nenačte

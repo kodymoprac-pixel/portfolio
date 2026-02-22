@@ -44,23 +44,24 @@
 
 
 
-    <div class="w3-card">
-  <h1 class="hed1"></h1>
-  <div id="vid-gallery-container" class="vid-gallery-grid"></div>
-</div>
+<div id="vid-gallery-container" class="vid-gallery-grid w3-card" ></div>
 
-<div id="videoModal" class="w3-modal" style="display:none;">
-  <div class="w3-modal-content">
-    <div class="w3-container">
-      <span onclick="closeModal()" class="close-btn">&times;</span>
-      
-      <div id="modalContent" class="w3-center"></div>
-      
-      <div class="modal-info">
-        <h2 id="modalTitle"></h2>
-        <p id="modalDesc"></p>
+<div id="videoModal" class="w3-modal" style="display:none; background-color: rgba(0,0,0,0.9); z-index: 9999;">
+  <div class="w3-modal-content w3-animate-zoom" style="background: #1a1a1a; max-width: 1000px; margin-top: 30px; border-radius: 8px; overflow: hidden;">
+    
+    <header class="w3-container" style="border-bottom: 1px solid #333; padding: 10px 20px;">
+      <h2 id="modalTitle" class="w3-large" style="color:white; margin:10px 0; font-weight: bold;"></h2>
+      <span onclick="closeModal()" class="w3-button w3-display-topright w3-hover-red" style="color:white; padding:12px 16px;">&times;</span>
+    </header>
+
+    <div id="modalContent" style="height: 60vh; background: #000; display: flex; align-items: center; justify-content: center;">
       </div>
-    </div>
+
+    <footer class="w3-container" style="border-top: 1px solid #333; background: #1a1a1a; padding: 15px 0;">
+      <p id="modalDesc" class="w3-center" style="color:#888; margin-bottom: 10px; padding: 0 20px;"></p>
+      <div id="videoNav" class="w3-center">
+        </div>
+    </footer>
   </div>
 </div>
 
