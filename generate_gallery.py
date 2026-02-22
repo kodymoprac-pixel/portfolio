@@ -1,76 +1,89 @@
 import os
 import shutil
-from PIL import Image
 import json
-
+import sys
 from PIL import Image
-# Přidejte tento řádek:
+
+# Oprava kódování pro Windows konzoli (vynutí UTF-8 pro printy)
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding='utf-8')
+
+# Nastavení limitu pro velké obrázky
 Image.MAX_IMAGE_PIXELS = None
 
-# Nastavení složek
-input_dir = "images_original"  # Zdrojové fotky
-output_dir = "images"          # Cílové zmenšené fotky
+# --- KONFIGURACE ---
+input_dir = "images_original"
+output_dir = "images"
 output_file = "gallery_list.js"
-max_width = 1000               # Maximální šířka
+max_width = 1000
+
+def get_creation_time(path):
+    stat = os.stat(path)
+    try:
+        return stat.st_birthtime
+    except AttributeError:
+        return stat.st_ctime
 
 # 1️⃣ Vyčištění staré galerie
 if os.path.exists(output_dir):
     shutil.rmtree(output_dir)
 os.makedirs(output_dir, exist_ok=True)
 
-# 2️⃣ Získání složek a jejich seřazení podle data vytvoření (od nejnovější)
+# 2️⃣ Načtení a řazení složek podle DATA VYTVOŘENÍ
 subfolders = [
     os.path.join(input_dir, d) 
     for d in os.listdir(input_dir) 
-    if os.path.isdir(os.path.join(input_dir, d))
+    if os.path.isdir(os.path.join(input_dir, d)) and not d.startswith('.')
 ]
 
-def get_creation_time(path):
-    stat = os.stat(path)
-    # Zkusíme birthtime (Linux/Mac), jinak použijeme ctime (Windows)
-    try:
-        return stat.st_birthtime
-    except AttributeError:
-        return stat.st_ctime
-
-# Seřazení podle funkce výše
 subfolders.sort(key=get_creation_time, reverse=True)
-
-# Sort podle mtime (modify time) - reverse=True zajistí nejnovější nahoře
-subfolders.sort(key=lambda x: os.path.getmtime(x), reverse=True)
 
 gallery = {}
 
-# 3️⃣ Zpracování fotek v seřazených složkách
+print(f"Zpracovávám {len(subfolders)} složek...")
+
+# 3️⃣ Zpracování fotek
 for folder_path in subfolders:
     folder_name = os.path.basename(folder_path)
     images_list = []
     
-    # Seřadíme i soubory uvnitř složky (např. podle názvu 01.jpg, 02.jpg...)
     files = sorted(os.listdir(folder_path))
     
     for f in files:
-        if f.lower().endswith((".jpg", ".jpeg", ".png")):
+        if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
             img_path = os.path.join(folder_path, f)
             
-            # Resize pomocí Pillow
-            img = Image.open(img_path)
-            w_percent = max_width / float(img.width)
-            h_size = int(img.height * w_percent)
-            img = img.resize((max_width, h_size), Image.LANCZOS)
-            
-            # Uložení do ploché struktury v /images
-            out_path = os.path.join(output_dir, f)
-            img.save(out_path)
-            
-            images_list.append(f"{output_dir}/{f}")
+            try:
+                img = Image.open(img_path)
+                
+                # Resize
+                w_percent = max_width / float(img.width)
+                h_size = int(img.height * w_percent)
+                img = img.resize((max_width, h_size), Image.Resampling.LANCZOS)
+                
+                # Unikátní název (složka_soubor.jpg)
+                safe_file_name = f"{folder_name}_{f}".replace(" ", "_")
+                out_path = os.path.join(output_dir, safe_file_name)
+                
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                    
+                img.save(out_path, "JPEG", quality=85)
+                images_list.append(f"{output_dir}/{safe_file_name}")
+                
+            except Exception as e:
+                print(f"Chyba u {img_path}: {e}")
     
     if images_list:
         gallery[folder_name] = images_list
+        # Odstraněno emoji, aby Windows neházel UnicodeEncodeError
+        print(f"OK: Složka '{folder_name}' hotova ({len(images_list)} fotek)")
 
-# 4️⃣ Uložení do .js pro web
-with open(output_file, "w", encoding="utf-8") as f:
-    json_data = json.dumps(gallery, indent=2, ensure_ascii=False)
-    f.write(f"const images = {json_data};")
-
-print(f"Hotovo! Galerie je seřazena. Celkem zpracováno {len(gallery)} alb.")
+# 4️⃣ Export do .js
+try:
+    with open(output_file, "w", encoding="utf-8") as f:
+        json_data = json.dumps(gallery, indent=2, ensure_ascii=False)
+        f.write(f"const images = {json_data};")
+    print(f"Hotovo! Seznam uložen do {output_file}")
+except Exception as e:
+    print(f"Chyba při zápisu: {e}")
