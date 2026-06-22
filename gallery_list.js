@@ -1,5 +1,27 @@
 const images = [
   {
+    "folder": "22.06.2026 - street",
+    "files": [
+      "images/22.06.2026_-_street_000090540027.jpg",
+      "images/22.06.2026_-_street_000090540031.jpg",
+      "images/22.06.2026_-_street_000090540037.jpg",
+      "images/22.06.2026_-_street_P1026254.jpg",
+      "images/22.06.2026_-_street_P1026277-2.jpg",
+      "images/22.06.2026_-_street_P1026297-2.jpg",
+      "images/22.06.2026_-_street_P1026311-2.jpg"
+    ]
+  },
+  {
+    "folder": "09.04.2026 - street",
+    "files": [
+      "images/09.04.2026_-_street__1024951.jpg",
+      "images/09.04.2026_-_street__1024956.jpg",
+      "images/09.04.2026_-_street__1024977.jpg",
+      "images/09.04.2026_-_street__1024985.jpg",
+      "images/09.04.2026_-_street__1024990.jpg"
+    ]
+  },
+  {
     "folder": "22.2.2026 - Kino",
     "files": [
       "images/22.2.2026_-_Kino_P1024664.jpg",
