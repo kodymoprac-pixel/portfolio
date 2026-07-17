@@ -3,12 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ondřej Kodym 3D</title>
-  <link rel="icon" type="image/x-icon" href="C:\Users\ondra\Plocha\my profile\portfolio\img\LAB_1277.webp">
-
-
-
-  <!-- W3.CSS -->
+  <title>Ondřej Kodym - 3D Projekty</title>
+  
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
@@ -16,56 +12,76 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap&subset=latin-ext" rel="stylesheet">
 
-
-  <style>
-   
-  </style>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
 
-  <!-- Navigační lišta -->
-  <div class="w3-bar w3-black w3-top w3-large">
-    <a href="index.html" class="w3-bar-item w3-button w3-mobile">Domů</a>
-    <a href="Video.html" class="w3-bar-item w3-button w3-mobile">Video</a>
-    <a href="foto.html" class="w3-bar-item w3-button w3-mobile">Foto</a>
-    <a href="3D.html" class="w3-bar-item w3-button w3-mobile">3D</a>
-  </div>
+<div class="w3-bar w3-black w3-top w3-large">
+  <a href="index.html" class="w3-bar-item w3-button w3-mobile">Domů</a>
+  <a href="Video.html" class="w3-bar-item w3-button w3-mobile">Video</a>
+  <a href="foto.html" class="w3-bar-item w3-button w3-mobile">Foto</a>
+  <a href="3D.html" class="w3-bar-item w3-button w3-mobile">3D</a>
+</div>
 
-  <!-- Obsah -->
-  <div class="w3-panel w3-card">
-    <h1 class="hed1">3D</h1>
-    <P style="text-align-last: center;color: red;">V procesu !!</P>
+<div class="w3-panel w3-card">
+  <h1 class="hed1">3D Projekty</h1>
+</div>
+
+<div id="3d-gallery-container" class="vid-gallery-grid w3-card"></div>
+
+<div id="modelModal" class="w3-modal" style="display:none; background-color: rgba(0,0,0,0.9); z-index: 9999;">
+  <div class="w3-modal-content w3-animate-zoom" style="background: #1a1a1a; max-width: 1200px; margin-top: 30px; border-radius: 8px; overflow: hidden;">
     
+    <header class="w3-container" style="border-bottom: 1px solid #333; padding: 10px 20px;">
+      <h2 id="modelModalTitle" class="w3-large" style="color:white; margin:10px 0;"></h2>
+      <span onclick="closeModelModal()" class="w3-button w3-display-topright w3-hover-red" style="color:white; padding:12px 16px; z-index: 10;">&times;</span>
+    </header>
+
+    <!-- Rozdělený layout: 3D model (50%) a Fotky (50%) -->
+    <div class="modal-split-layout">
+        <!-- 3D Prohlížeč -->
+        <div id="modelViewerContainer" class="model-viewer-area"></div>
+        
+        <!-- Galerie fotek s listováním -->
+        <div class="model-photos-area">
+            <div id="photoCarousel" class="photo-carousel-container">
+                <button class="carousel-btn left" onclick="prevPhoto()">&#10094;</button>
+                <img id="currentModelPhoto" src="" alt="Fotografie projektu">
+                <button class="carousel-btn right" onclick="nextPhoto()">&#10095;</button>
+            </div>
+            <div id="photoCounter" style="text-align:center; color:#aaa; margin-top:10px; font-size:14px;"></div>
+        </div>
+    </div>
+
+    <footer class="w3-container" style="border-top: 1px solid #333; background: #1a1a1a; padding: 15px 0;">
+      <div id="modelNav" class="w3-center" style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+        <button class="nav-btn" onclick="prevModel()">❮ Předchozí projekt</button>
+        <a id="makerworldLink" href="#" target="_blank" class="w3-button makerworld-btn" style="display: none;">
+          <i class="fa fa-cube" style="margin-right: 8px;"></i> Stáhnout na MakerWorld
+        </a>
+        <button class="nav-btn" onclick="nextModel()">Další projekt ❯</button>
+      </div>
+    </footer>
   </div>
+</div>
 
+<script src="3d_list.js"></script>
+<script src="3d_logic.js"></script>
 
-  <!-- Zápatí -->
- <footer class="w3-card w3-container w3-center" style="margin: 40px auto 20px; padding: 40px; max-width: 1200px; background-color: rgba(88, 88, 88, 0.336); border-radius: 25px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);">
-  
+<footer class="w3-card w3-container w3-center" style="margin: 40px auto 20px; padding: 40px; max-width: 1200px; background-color: rgba(88, 88, 88, 0.336); border-radius: 25px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);">
   <h1 class="hed1">Kontakt</h1>
   <p>Email: <a href="mailto:kodymo.prac@gmail.com" class="w3-text-white">kodymo.prac@gmail.com</a></p>
-  
   <div class="w3-section">
-    <a href="https://www.instagram.com/andy31500/" target="_blank" class="w3-button w3-circle w3-black w3-text-white w3-hover-white w3-hover-text-black">
-      <i class="fa fa-instagram"></i>
-    </a>
-    
-    <a href="https://www.facebook.com/profile.php?id=61580417964563" target="_blank" class="w3-button w3-circle w3-black w3-text-white w3-hover-white w3-hover-text-black">
-      <i class="fa fa-facebook"></i>
-    </a>
-    
-    <a href="mailto:kodymo.prac@gmail.com" class="w3-button w3-circle w3-black w3-text-white w3-hover-white w3-hover-text-black">
-      <i class="fa fa-envelope"></i>
-    </a>
+    <a href="https://www.instagram.com/andy31500/" target="_blank" class="w3-button w3-circle w3-black w3-text-white w3-hover-white w3-hover-text-black"><i class="fa fa-instagram"></i></a>
+    <a href="https://www.facebook.com/profile.php?id=61580417964563" target="_blank" class="w3-button w3-circle w3-black w3-text-white w3-hover-white w3-hover-text-black"><i class="fa fa-facebook"></i></a>
+    <a href="mailto:kodymo.prac@gmail.com" class="w3-button w3-circle w3-black w3-text-white w3-hover-white w3-hover-text-black"><i class="fa fa-envelope"></i></a>
   </div>
-
   <div class="w3-border-top w3-border-grey w3-padding-16 w3-margin-top w3-small w3-opacity">
     <p>&copy; <span id="year"></span> | kodymo.pixel</p>
   </div>
 </footer>
-
-<script>
-  document.getElementById("year").textContent = new Date().getFullYear();
-</script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 </body>
 </html>
